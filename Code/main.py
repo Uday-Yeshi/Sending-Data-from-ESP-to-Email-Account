@@ -1,17 +1,17 @@
 import umail
 import time
 import machine
+from machine import Pin
 
 # Email configuration
-sender_email = 'enter your senders email'
-sender_name = 'enter your senders name'
-sender_app_password = 'app passcode' # This can be obatined by usnig attached document as guide
-recipient_email = 'enter recipient email'
-email_subject = 'Soil Moisture Level' # enter your subject
+sender_email = 'pojectstudy@gmail.com'
+sender_name = 'ESP32'
+sender_app_password = 'xkfc ysid tsqz tlso'
+recipient_email = 'uday.yeshi23@spit.ac.in'
+email_subject = 'Soil Moisture Level'
 
-# Initialize capacitive touch sensor (adjust the pin as necessary)
-touch_pin = machine.Pin(32)  # Replace with the actual pin used for the touch sensor
-touch_sensor = machine.TouchPad(touch_pin)
+# Initialize TTP223B touch sensor (adjust the pin as necessary)
+touch_pin = Pin(4, Pin.IN)  # Replace with the actual pin used for the touch sensor
 
 # Initialize soil moisture sensor (analog pin)
 moisture_sensor_pin = machine.Pin(34)  # Replace with the actual pin used for the moisture sensor
@@ -36,22 +36,23 @@ try:
     while True:
         try:
             # Check if the touch sensor is triggered
-            touch_value = touch_sensor.read()
-            if touch_value < 500:  # Adjust threshold as needed
+            if touch_pin.value() == 1:
                 print("Touch detected! Pausing for 30 seconds.")
                 time.sleep(30)  # Pause for 30 seconds
             else:
                 # Read soil moisture sensor value
                 moisture_value = moisture_adc.read()  # Use ADC to read the analog value
                 print("Soil Moisture Level:", moisture_value)
+                print("Please on the motor")
 
                 # Send email with moisture value
                 send_email(moisture_value)
                 time.sleep(5)  # Wait for 5 seconds before the next reading
 
         except ValueError as e:
-            print("Touch pad error:", e)
+            print("Sensor error:", e)
             time.sleep(1)  # Pause briefly before retrying
 
 except KeyboardInterrupt:
     print("Program stopped.")
+
